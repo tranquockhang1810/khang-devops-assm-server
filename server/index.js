@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(cors());
 
 const connect = () => {
-  mongoose.connect('mongodb://mongo-db:27017/devopsAssignment', { useNewUrlParser: true, useUnifiedTopology: true })
+  mongoose.connect('mongodb://13.54.105.133:27017/devopsAssignment', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to MongoDB'))
     .catch(error => console.error('Error connecting to MongoDB:', error));
 }
