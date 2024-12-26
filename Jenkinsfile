@@ -60,7 +60,7 @@ pipeline {
                   docker network create prod || echo "Network 'prod' already exists"
 
                   # Run MongoDB container
-                  docker start mongo-db || echo "MongoDB container already running"
+                  docker restart mongo-db || echo "MongoDB container already running"
 
                   # Pull and run backend container
                   docker image pull ${DOCKER_IMAGE}:${DOCKER_TAG}
