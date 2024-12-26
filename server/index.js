@@ -19,7 +19,7 @@ const Product = mongoose.model('Product', {
 });
 
 app.get('/', (req, res) => {
-  res.send('Tran Quoc Khang DevOps Assignment!');
+  res.send('DevOps Assignment!');
 });
 
 app.get('/api/v1/products', (req, res) => {
