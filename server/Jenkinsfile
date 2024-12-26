@@ -41,21 +41,6 @@ pipeline {
             }
         }
 
-        stage('Deploy server to DEV') {
-            steps {
-                echo 'Clearing old containers...'
-                sh '''
-                  docker container stop khang-devops-assm-server || echo "No container name khang-devops-assm-server to stop"
-                  docker container rm khang-devops-assm-server || echo "No container name khang-devops-assm-server to remove"
-                  docker image rm ${DOCKER_IMAGE}:${DOCKER_TAG} || echo "No image name ${DOCKER_IMAGE}:${DOCKER_TAG} to remove"
-                '''
-                echo 'Deploying to DEV...'
-                sh 'docker image pull ${DOCKER_IMAGE}:${DOCKER_TAG}'
-                sh 'docker network create dev || echo "this network exists"'
-                sh 'docker container run -d --rm --name khang-devops-assm-server -p 8000:8000 --network dev ${DOCKER_IMAGE}:${DOCKER_TAG}'
-            }
-        }
-
         stage('Deploy server to PROD') {
           steps {
             script {
@@ -64,12 +49,20 @@ pipeline {
                 sh '''
                   ssh -o StrictHostKeyChecking=no ${PROD_USER}@${PROD_SERVER} << EOF
 
+                  # Clear old containers and images
                   docker container stop khang-devops-assm-server || echo "No container name khang-devops-assm-server to stop"
                   docker container rm khang-devops-assm-server || echo "No container name khang-devops-assm-server to remove"
                   docker image rm ${DOCKER_IMAGE}:${DOCKER_TAG} || echo "No image name ${DOCKER_IMAGE}:${DOCKER_TAG} to remove"
 
+                  # Create 'prod' network if not exists
+                  docker network create prod || echo "Network 'prod' already exists"
+
+                  # Run MongoDB container
+                  docker container run -d --rm --name mongo-db --network prod -p 27017:27017 mongo:latest || echo "MongoDB container already running"
+
+                  # Pull and run backend container
                   docker image pull ${DOCKER_IMAGE}:${DOCKER_TAG}
-                  docker container run -d --rm --name khang-devops-assm-server -p 8000:8000 ${DOCKER_IMAGE}:${DOCKER_TAG}
+                  docker container run -d --rm --name khang-devops-assm-server -p 8000:8000 --network prod ${DOCKER_IMAGE}:${DOCKER_TAG}
                 '''
               }
             }
