@@ -55,13 +55,12 @@ pipeline {
                   docker image rm ${DOCKER_IMAGE}:${DOCKER_TAG} || echo "No image name ${DOCKER_IMAGE}:${DOCKER_TAG} to remove"
                   
                   docker container stop mongo-db || echo "No container name mongo-db to stop"
-                  docker container rm mongo-db || echo "No container name mongo-db to remove"
 
                   # Create 'prod' network if not exists
                   docker network create prod || echo "Network 'prod' already exists"
 
                   # Run MongoDB container
-                  docker container run -d --rm --name mongo-db --network prod -p 27017:27017 mongo:latest || echo "MongoDB container already running"
+                  docker start mongo-db || echo "MongoDB container already running"
 
                   # Pull and run backend container
                   docker image pull ${DOCKER_IMAGE}:${DOCKER_TAG}
