@@ -53,6 +53,9 @@ pipeline {
                   docker container stop khang-devops-assm-server || echo "No container name khang-devops-assm-server to stop"
                   docker container rm khang-devops-assm-server || echo "No container name khang-devops-assm-server to remove"
                   docker image rm ${DOCKER_IMAGE}:${DOCKER_TAG} || echo "No image name ${DOCKER_IMAGE}:${DOCKER_TAG} to remove"
+                  
+                  docker container stop mongo-db || echo "No container name mongo-db to stop"
+                  docker container rm mongo-db || echo "No container name mongo-db to remove"
 
                   # Create 'prod' network if not exists
                   docker network create prod || echo "Network 'prod' already exists"
